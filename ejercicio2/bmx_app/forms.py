@@ -17,6 +17,7 @@ class DateRangeForm(forms.Form):
     serie = forms.ChoiceField(choices=choices)
     start_date = forms.DateField(label='fecha inicial',
                                  initial=start.date(),
+                                 required=True,
                                  widget=SelectDateWidget(
                                      years=range(1991, now.year+1)))
     end_date = forms.DateField(label='fecha final',
@@ -28,6 +29,8 @@ class DateRangeForm(forms.Form):
         cleaned_data = super().clean()
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
+        if not start_date or end_date:
+            return
         if start_date > end_date:
             raise forms.ValidationError(
                 "fecha inicio debe ser anterior o igual a fecha final"
