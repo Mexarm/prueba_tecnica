@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  webexamen:
+    environment:
+      - BMXTOKEN
+    build: .
+    image: webexamen:v1
+    command: bash -c "
+        pipenv run python manage.py migrate 
+        && pipenv run gunicorn bmx_site.wsgi:application --bind 0.0.0.0:80 --workers=4 --timeout=120 --capture-output --log-level=debug --error-logfile /var/log/gunicorn_error.log --log-file /var/log/gunicorn.log
+      "
+    volumes:
+      - .:/code
+    ports:
+      - "80:80"

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2>Ha ocurrido un error</h2>
+
+<p>{{message}}</p>
+
+<div class="row">
+    <div class="col-6">
+        <a href="{% url 'select_date_range' %}" class="btn btn-secondary active" role="button"
+            aria-pressed="true"> &lt; volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+{% for serie in data.bmx.series %}
+<h3>{{serie.titulo}}</h3>
+<p>(consulta del {{fechaInicial}} al {{fechaFinal}})</p>
+
+{% if serie.datos is None %}
+<div class="alert alert-warning" role="alert">
+    No hay datos en el rango seleccionado
+</div>
+{% else %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">fecha</th>
+            <th scope="col">valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dato in serie.datos %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{dato.fecha}}</td>
+            <td>{{dato.dato}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Resumen</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Minimo</th>
+            <th scope="col">Maximo</th>
+            <th scope="col">Promedio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{serie.min}}</td>
+            <td>{{serie.max}}</td>
+            <td>{{serie.avg}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Grafico</h3>
+<canvas id="{{serie.idSerie}}" width="400" height="400"></canvas>
+<script>
+    var ctx = document.getElementById('{{serie.idSerie}}');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ serie.labels | safe }},
+    datasets: [{
+        label: '{{serie.title}}',
+        data: {{ serie.data | safe }},
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+
+    ],
+        borderColor: [
+        'rgba(255, 99, 132, 1)',
+
+    ],
+        borderWidth: 1
+                    }]
+                },
+    options: {
+        elements: {
+            point: {
+                radius: customRadius,
+                    display: true
+            }
+        }
+    }
+            });
+
+    function customRadius(context) {
+        let index = context.dataIndex;
+        // let value = context.dataset.data[ index ];
+        return {{ serie.max_index | safe }}.indexOf(index) > -1 ? 10 : 2;
+        }
+</script>
+{% endif %}
+{% endfor %}
+
+<div class="row mt-5">
+    <div class="col-sm">
+
+    </div>
+    <div class="col-sm">
+        <a href="{% url 'select_date_range' %}" class="btn btn-secondary active" role="button" aria-pressed="true"> &lt;
+            cambiar serie o rango de fechas</a>
+    </div>
+    <div class="col-sm">
+
+    </div>
+</div>
+
+{% endblock %}
