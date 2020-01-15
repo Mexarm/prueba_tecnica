@@ -1,5 +1,5 @@
 def get_greatest(str_val, length):
-    lst = []
+    greatest = None
     for i in range(len(str_val)-length+1):
-        lst.append(int(str_val[i:i+length]))
-    return max(lst)
+        greatest = max(greatest or 0, int(str_val[i:i+length]))
+    return greatest
